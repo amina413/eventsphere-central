@@ -1,7 +1,12 @@
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CreateEventForm } from "@/components/forms/CreateEventForm";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Calendar, 
   Clock, 
@@ -44,31 +49,67 @@ const myEvents = [
 ];
 
 const OrganizerDashboard = () => {
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  const { user, profile } = useAuth();
+  const { toast } = useToast();
+
+  const fetchMyEvents = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          *,
+          event_registrations(count)
+        `)
+        .eq('organizer_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMyEvents();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <DashboardLayout variant="organizer">
+        <div className="flex items-center justify-center min-h-96">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
   return (
     <DashboardLayout variant="organizer">
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Organizer Dashboard</h1>
+            <h1 className="text-3xl font-bold text-foreground">Welcome, {profile?.full_name || 'Organizer'}!</h1>
             <p className="text-muted-foreground">Manage your events and track performance.</p>
           </div>
-          <Button variant="hero" className="shadow-glow">
-            <Plus className="h-4 w-4 mr-2" />
-            Create Event
-          </Button>
+          <CreateEventForm onEventCreated={fetchMyEvents} />
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="border-0 shadow-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Events Created</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Events</CardTitle>
               <Calendar className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">24</div>
-              <p className="text-xs text-muted-foreground">+3 from last month</p>
+              <div className="text-2xl font-bold text-primary">{events.length}</div>
+              <p className="text-xs text-muted-foreground">Events created</p>
             </CardContent>
           </Card>
 
@@ -78,59 +119,39 @@ const OrganizerDashboard = () => {
               <Clock className="h-4 w-4 text-warning" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-warning">2</div>
+              <div className="text-2xl font-bold text-warning">
+                {events.filter(e => e.status === 'pending').length}
+              </div>
               <p className="text-xs text-muted-foreground">Awaiting admin review</p>
             </CardContent>
           </Card>
 
           <Card className="border-0 shadow-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
+              <CardTitle className="text-sm font-medium">Approved Events</CardTitle>
               <Users className="h-4 w-4 text-success" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-success">1,247</div>
-              <p className="text-xs text-muted-foreground">+15% from last month</p>
+              <div className="text-2xl font-bold text-success">
+                {events.filter(e => e.status === 'approved').length}
+              </div>
+              <p className="text-xs text-muted-foreground">Live events</p>
             </CardContent>
           </Card>
 
           <Card className="border-0 shadow-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Feedback Count</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Registrations</CardTitle>
               <MessageSquare className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent">892</div>
-              <p className="text-xs text-muted-foreground">4.8/5 avg rating</p>
+              <div className="text-2xl font-bold text-accent">
+                {events.reduce((sum, event) => sum + event.current_registrations, 0)}
+              </div>
+              <p className="text-xs text-muted-foreground">Across all events</p>
             </CardContent>
           </Card>
         </div>
-
-        {/* Quick Actions */}
-        <Card className="border-0 shadow-card">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button variant="outline" className="p-6 h-auto flex flex-col items-center">
-                <Plus className="h-8 w-8 mb-2 text-primary" />
-                <span className="font-medium">Create New Event</span>
-                <span className="text-sm text-muted-foreground">Set up your next event</span>
-              </Button>
-              <Button variant="outline" className="p-6 h-auto flex flex-col items-center">
-                <Upload className="h-8 w-8 mb-2 text-accent" />
-                <span className="font-medium">Upload Media</span>
-                <span className="text-sm text-muted-foreground">Add photos and videos</span>
-              </Button>
-              <Button variant="outline" className="p-6 h-auto flex flex-col items-center">
-                <BarChart3 className="h-8 w-8 mb-2 text-success" />
-                <span className="font-medium">View Reports</span>
-                <span className="text-sm text-muted-foreground">Analyze event performance</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* My Events */}
         <Card className="border-0 shadow-card">
@@ -139,13 +160,13 @@ const OrganizerDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {myEvents.map((event) => (
+              {events.map((event) => (
                 <div key={event.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
                   <div className="flex items-center space-x-4">
                     <div>
-                      <h4 className="font-medium text-card-foreground">{event.name}</h4>
+                      <h4 className="font-medium text-card-foreground">{event.title}</h4>
                       <p className="text-sm text-muted-foreground">
-                        {event.date} • {event.registrations}/{event.capacity} registered
+                        {new Date(event.event_date).toLocaleDateString()} • {event.current_registrations}/{event.capacity} registered
                       </p>
                     </div>
                   </div>
@@ -156,13 +177,17 @@ const OrganizerDashboard = () => {
                       className={
                         event.status === "approved" 
                           ? "bg-success text-success-foreground" 
-                          : "bg-warning text-warning-foreground"
+                          : event.status === "pending"
+                          ? "bg-warning text-warning-foreground"
+                          : "bg-destructive text-destructive-foreground"
                       }
                     >
                       {event.status === "approved" ? (
                         <CheckCircle className="w-3 h-3 mr-1" />
-                      ) : (
+                      ) : event.status === "pending" ? (
                         <Clock className="w-3 h-3 mr-1" />
+                      ) : (
+                        <XCircle className="w-3 h-3 mr-1" />
                       )}
                       {event.status}
                     </Badge>
@@ -180,6 +205,12 @@ const OrganizerDashboard = () => {
                   </div>
                 </div>
               ))}
+              
+              {events.length === 0 && (
+                <p className="text-center text-muted-foreground py-8">
+                  You haven't created any events yet. Click "Create Event" to get started!
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
