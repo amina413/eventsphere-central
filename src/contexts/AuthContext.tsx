@@ -87,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data: {
           full_name: userData.fullName,
           role: userData.role,
-          college: userData.college,
           id_number: userData.idNumber,
         }
       }

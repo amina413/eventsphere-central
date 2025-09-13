@@ -86,7 +86,10 @@ export const Navbar = ({ variant = "home" }: NavbarProps) => {
               Home
             </Link>
             <Link to="/events" className="nav-link text-nav-foreground hover:text-accent">
-              Events
+              View Events
+            </Link>
+            <Link to="/gallery" className="nav-link text-nav-foreground hover:text-accent">
+              Gallery
             </Link>
             <Link to="/about" className="nav-link text-nav-foreground hover:text-accent">
               About
@@ -153,7 +156,10 @@ export const Navbar = ({ variant = "home" }: NavbarProps) => {
                 Home
               </Link>
               <Link to="/events" className="text-nav-foreground hover:text-accent">
-                Events
+                View Events
+              </Link>
+              <Link to="/gallery" className="text-nav-foreground hover:text-accent">
+                Gallery
               </Link>
               <Link to="/about" className="text-nav-foreground hover:text-accent">
                 About

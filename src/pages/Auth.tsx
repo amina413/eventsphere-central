@@ -11,15 +11,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
-const colleges = [
-  'Engineering College',
-  'Arts & Science College',
-  'Medical College',
-  'Business School',
-  'Law College',
-  'Education College',
-];
-
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +31,6 @@ export default function Auth() {
     email: '',
     password: '',
     confirmPassword: '',
-    college: '',
     role: '',
     idNumber: '',
   });
@@ -109,7 +99,6 @@ export default function Auth() {
       const { error } = await signUp(signupForm.email, signupForm.password, {
         fullName: signupForm.fullName,
         role: signupForm.role,
-        college: signupForm.college,
         idNumber: signupForm.idNumber,
       });
 
@@ -329,34 +318,15 @@ export default function Auth() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="college">College</Label>
-                    <Select 
-                      value={signupForm.college} 
-                      onValueChange={(value) => setSignupForm(prev => ({ ...prev, college: value }))}
-                    >
-                      <SelectTrigger className="bg-input border-border">
-                        <SelectValue placeholder="Select your college" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card border-border">
-                        {colleges.map((college) => (
-                          <SelectItem key={college} value={college} className="hover:bg-accent/20">
-                            {college}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
+                      <Label htmlFor="role">User Type</Label>
                       <Select 
                         value={signupForm.role} 
                         onValueChange={(value) => setSignupForm(prev => ({ ...prev, role: value }))}
                       >
                         <SelectTrigger className="bg-input border-border">
-                          <SelectValue placeholder="Select role" />
+                          <SelectValue placeholder="Select user type" />
                         </SelectTrigger>
                         <SelectContent className="bg-card border-border">
                           <SelectItem value="visitor" className="hover:bg-accent/20">Visitor</SelectItem>

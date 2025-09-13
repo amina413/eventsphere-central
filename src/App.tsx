@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import StudentDashboard from "./pages/StudentDashboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
+import Gallery from "./pages/Gallery";
+import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/login" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/events" element={<Events />} />
               <Route 
                 path="/student/dashboard" 
                 element={
