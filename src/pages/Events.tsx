@@ -110,13 +110,13 @@ const Events = () => {
   };
 
   const eventTypeColors = {
-    technical: "bg-blue-500",
-    cultural: "bg-purple-500", 
-    academic: "bg-green-500",
-    sports: "bg-orange-500",
-    workshop: "bg-indigo-500",
-    seminar: "bg-teal-500",
-    competition: "bg-red-500"
+    technical: "bg-primary",
+    cultural: "bg-primary", 
+    academic: "bg-primary",
+    sports: "bg-primary",
+    workshop: "bg-primary",
+    seminar: "bg-primary",
+    competition: "bg-primary"
   };
 
   if (loading) {
@@ -137,10 +137,10 @@ const Events = () => {
       <div className="min-h-screen bg-background">
         <Navbar variant="home" />
         
-        <main className="container mx-auto px-4 py-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Upcoming Events</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+        <main className="container mx-auto px-4 py-6 lg:py-8">
+          <div className="text-center mb-8 lg:mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Upcoming Events</h1>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
               Discover and register for exciting events happening at our college. Don't miss out on opportunities to learn, compete, and connect!
             </p>
           </div>
@@ -151,7 +151,7 @@ const Events = () => {
               <p className="text-muted-foreground">Check back soon for new events!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
               {events.map((event) => (
                 <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">

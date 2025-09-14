@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -29,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Check for existing session in localStorage
@@ -63,6 +65,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(mockUser);
     setProfile(mockProfile);
     
+    // Navigate to appropriate dashboard based on role
+    if (mockProfile.role === 'student') {
+      navigate('/student/dashboard');
+    } else if (mockProfile.role === 'organizer') {
+      navigate('/organizer/dashboard');
+    } else {
+      navigate('/');
+    }
+    
     return { error: null };
   };
 
@@ -85,6 +96,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     setUser(mockUser);
     setProfile(mockProfile);
+    
+    // Navigate to appropriate dashboard based on role
+    if (mockProfile.role === 'student') {
+      navigate('/student/dashboard');
+    } else if (mockProfile.role === 'organizer') {
+      navigate('/organizer/dashboard');
+    } else {
+      navigate('/');
+    }
     
     return { error: null };
   };

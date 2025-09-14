@@ -90,7 +90,7 @@ const OrganizerDashboard = () => {
         <CreateEventForm onEventCreated={fetchMyEvents} />
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           <Card className="border-0 shadow-card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Events</CardTitle>
@@ -150,7 +150,7 @@ const OrganizerDashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {events.map((event) => (
-                <div key={event.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 md:p-4 border border-border rounded-lg gap-3 sm:gap-0">
                   <div className="flex items-center space-x-4">
                     <div>
                       <h4 className="font-medium text-card-foreground">{event.title}</h4>

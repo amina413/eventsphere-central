@@ -94,9 +94,6 @@ export const Navbar = ({ variant = "home" }: NavbarProps) => {
             <Link to="/about" className="nav-link text-nav-foreground hover:text-accent">
               About
             </Link>
-            <Link to="/contact" className="nav-link text-nav-foreground hover:text-accent">
-              Contact
-            </Link>
           </div>
 
           {/* Auth/User Section */}
@@ -163,9 +160,6 @@ export const Navbar = ({ variant = "home" }: NavbarProps) => {
               </Link>
               <Link to="/about" className="text-nav-foreground hover:text-accent">
                 About
-              </Link>
-              <Link to="/contact" className="text-nav-foreground hover:text-accent">
-                Contact
               </Link>
               <div className="flex flex-col space-y-2 pt-4 border-t border-border/20">
                 {user ? (
