@@ -54,11 +54,6 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-nav-foreground/80 hover:text-accent transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
                 <Link to="/contact" className="text-nav-foreground/80 hover:text-accent transition-colors">
                   Contact
                 </Link>

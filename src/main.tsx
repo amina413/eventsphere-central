@@ -3,11 +3,14 @@ import App from "./App.tsx";
 import "./index.css";
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </ThemeProvider>
+  <BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
+  </BrowserRouter>
 );
