@@ -5,81 +5,67 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CreateEventForm } from "@/components/forms/CreateEventForm";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Calendar, 
   Clock, 
   Users, 
   MessageSquare, 
-  Plus, 
-  Upload, 
-  BarChart3,
   Edit,
   Settings,
   CheckCircle,
   XCircle
 } from "lucide-react";
 
-const myEvents = [
+// Mock data
+const mockEvents = [
   {
     id: 1,
-    name: "TechFest 2024",
-    date: "2024-03-15",
+    title: "TechFest 2024",
+    event_date: "2024-03-15",
     status: "approved",
-    registrations: 250,
-    capacity: 300
+    current_registrations: 250,
+    capacity: 300,
+    created_at: "2024-02-01"
   },
   {
     id: 2,
-    name: "AI Workshop",
-    date: "2024-03-20",
+    title: "AI Workshop",
+    event_date: "2024-03-20",
     status: "pending",
-    registrations: 45,
-    capacity: 50
+    current_registrations: 45,
+    capacity: 50,
+    created_at: "2024-02-15"
   },
   {
     id: 3,
-    name: "Coding Bootcamp",
-    date: "2024-03-25",
+    title: "Coding Bootcamp",
+    event_date: "2024-03-25",
     status: "approved",
-    registrations: 180,
-    capacity: 200
+    current_registrations: 180,
+    capacity: 200,
+    created_at: "2024-02-20"
   }
 ];
 
 const OrganizerDashboard = () => {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState(mockEvents);
   const [loading, setLoading] = useState(true);
   
   const { user, profile } = useAuth();
   const { toast } = useToast();
 
   const fetchMyEvents = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .select(`
-          *,
-          event_registrations(count)
-        `)
-        .eq('organizer_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setEvents(data || []);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    } finally {
+    // Simulate API call
+    setTimeout(() => {
+      setEvents(mockEvents);
       setLoading(false);
-    }
+    }, 1000);
   };
 
   useEffect(() => {
     fetchMyEvents();
-  }, [user]);
+  }, []);
 
   if (loading) {
     return (
@@ -90,6 +76,7 @@ const OrganizerDashboard = () => {
       </DashboardLayout>
     );
   }
+  
   return (
     <DashboardLayout variant="organizer">
       <div className="space-y-6">

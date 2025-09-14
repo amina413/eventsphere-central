@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'visitor' | 'student' | 'organizer' | 'admin';
+  requiredRole?: 'visitor' | 'student' | 'organizer';
 }
 
 export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
@@ -26,9 +26,6 @@ export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) 
             break;
           case 'organizer':
             navigate('/organizer/dashboard');
-            break;
-          case 'admin':
-            navigate('/admin/dashboard');
             break;
           default:
             navigate('/');

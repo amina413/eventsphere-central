@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { EventRegistrationForm } from "@/components/forms/EventRegistrationForm";
 import { FeedbackForm } from "@/components/forms/FeedbackForm";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Calendar, 
@@ -20,139 +19,124 @@ import {
   Download
 } from "lucide-react";
 
-const upcomingEvents = [];
-const certificates = [];
+// Mock data
+const mockEvents = [
+  {
+    id: 1,
+    title: "Tech Innovation Summit 2024",
+    event_date: "2024-03-20",
+    location: "Main Auditorium",
+    category: "technical",
+    current_registrations: 120,
+    capacity: 150,
+    organizer: { full_name: "Dr. Smith" }
+  },
+  {
+    id: 2,
+    title: "Cultural Fest Harmony",
+    event_date: "2024-03-25",
+    location: "Open Grounds",
+    category: "cultural",
+    current_registrations: 200,
+    capacity: 300,
+    organizer: { full_name: "Prof. Johnson" }
+  },
+  {
+    id: 3,
+    title: "AI & Machine Learning Workshop",
+    event_date: "2024-04-01",
+    location: "CS Lab Block",
+    category: "academic",
+    current_registrations: 45,
+    capacity: 50,
+    organizer: { full_name: "Dr. Wilson" }
+  }
+];
+
+const mockRegistrations = [
+  {
+    id: 1,
+    event_id: 1,
+    status: "confirmed",
+    events: {
+      title: "Tech Innovation Summit 2024",
+      event_date: "2024-03-20",
+      location: "Main Auditorium",
+      category: "technical"
+    }
+  },
+  {
+    id: 2,
+    event_id: 2,
+    status: "attended",
+    events: {
+      title: "Cultural Fest Harmony",
+      event_date: "2024-03-25",
+      location: "Open Grounds", 
+      category: "cultural"
+    }
+  }
+];
+
+const mockCertificates = [
+  {
+    id: 1,
+    certificate_type: "participation",
+    issued_at: "2024-03-26",
+    events: {
+      title: "Cultural Fest Harmony"
+    }
+  }
+];
+
+const mockNotifications = [
+  {
+    id: 1,
+    message: "Your registration for Tech Summit has been confirmed!",
+    created_at: "2024-03-15"
+  },
+  {
+    id: 2,
+    message: "New certificate available for download",
+    created_at: "2024-03-26"
+  }
+];
 
 const StudentDashboard = () => {
-  const [events, setEvents] = useState<any[]>([]);
-  const [registrations, setRegistrations] = useState<any[]>([]);
-  const [certificates, setCertificates] = useState<any[]>([]);
-  const [notifications, setNotifications] = useState<any[]>([]);
+  const [events, setEvents] = useState(mockEvents);
+  const [registrations, setRegistrations] = useState(mockRegistrations);
+  const [certificates, setCertificates] = useState(mockCertificates);
+  const [notifications, setNotifications] = useState(mockNotifications);
   const [loading, setLoading] = useState(true);
   
   const { user, profile } = useAuth();
   const { toast } = useToast();
 
-  // Fetch approved events for browsing
-  const fetchEvents = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('events')
-        .select(`
-          *,
-          profiles:organizer_id (full_name)
-        `)
-        .eq('status', 'approved')
-        .order('event_date', { ascending: true });
-
-      if (error) throw error;
-      setEvents(data || []);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    }
-  };
-
-  // Fetch user's registrations
-  const fetchRegistrations = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('event_registrations')
-        .select(`
-          *,
-          events (
-            title,
-            event_date,
-            location,
-            category
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setRegistrations(data || []);
-    } catch (error) {
-      console.error('Error fetching registrations:', error);
-    }
-  };
-
-  // Fetch user's certificates
-  const fetchCertificates = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('certificates')
-        .select(`
-          *,
-          events (title)
-        `)
-        .eq('user_id', user.id)
-        .order('issued_at', { ascending: false });
-
-      if (error) throw error;
-      setCertificates(data || []);
-    } catch (error) {
-      console.error('Error fetching certificates:', error);
-    }
-  };
-
-  // Fetch notifications
-  const fetchNotifications = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('read', false)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      if (error) throw error;
-      setNotifications(data || []);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
-  };
-
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await Promise.all([
-        fetchEvents(),
-        fetchRegistrations(),
-        fetchCertificates(),
-        fetchNotifications()
-      ]);
+    // Simulate loading
+    setTimeout(() => {
       setLoading(false);
-    };
-
-    loadData();
-  }, [user]);
+    }, 1000);
+  }, []);
 
   const handleCancelRegistration = async (registrationId: string) => {
     try {
-      const { error } = await supabase
-        .from('event_registrations')
-        .update({ status: 'cancelled' })
-        .eq('id', registrationId);
-
-      if (error) throw error;
+      setRegistrations(prev => 
+        prev.map(reg => 
+          reg.id.toString() === registrationId 
+            ? { ...reg, status: 'cancelled' } 
+            : reg
+        )
+      );
 
       toast({
         title: 'Registration Cancelled',
         description: 'Your registration has been cancelled successfully.',
       });
-
-      fetchRegistrations();
     } catch (error: any) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to cancel registration.',
+        description: 'Failed to cancel registration.',
         variant: 'destructive',
       });
     }
@@ -167,6 +151,7 @@ const StudentDashboard = () => {
       </DashboardLayout>
     );
   }
+  
   return (
     <DashboardLayout variant="student">
       <div className="space-y-6">
@@ -242,10 +227,9 @@ const StudentDashboard = () => {
                   </div>
                   
                   <div className="ml-4">
-                    <EventRegistrationForm 
-                      event={event} 
-                      onRegistrationSuccess={fetchRegistrations}
-                    />
+                    <Button size="sm" className="bg-primary hover:bg-primary/90">
+                      Register Now
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -294,11 +278,10 @@ const StudentDashboard = () => {
                     
                     <div className="flex space-x-2">
                       {registration.status === "attended" && (
-                        <FeedbackForm 
-                          eventId={registration.event_id}
-                          eventTitle={registration.events?.title || 'Event'}
-                          onFeedbackSubmitted={fetchNotifications}
-                        />
+                        <Button size="sm" variant="outline">
+                          <MessageSquare className="h-4 w-4 mr-1" />
+                          Feedback
+                        </Button>
                       )}
                       {registration.status === "confirmed" && (
                         <Button size="sm" variant="outline">
@@ -310,7 +293,7 @@ const StudentDashboard = () => {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => handleCancelRegistration(registration.id)}
+                          onClick={() => handleCancelRegistration(registration.id.toString())}
                         >
                           <X className="h-4 w-4 mr-1" />
                           Cancel

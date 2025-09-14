@@ -331,26 +331,23 @@ export default function Auth() {
                         <SelectContent className="bg-card border-border">
                           <SelectItem value="visitor" className="hover:bg-accent/20">Visitor</SelectItem>
                           <SelectItem value="student" className="hover:bg-accent/20">Student</SelectItem>
-                          <SelectItem value="organizer" className="hover:bg-accent/20">Organizer</SelectItem>
-                          <SelectItem value="admin" className="hover:bg-accent/20">Admin</SelectItem>
+<SelectItem value="organizer" className="hover:bg-accent/20">Organizer</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="id-number">
-                        {signupForm.role === 'student' ? 'Student ID' : 
-                         signupForm.role === 'organizer' ? 'Staff ID' : 
-                         signupForm.role === 'admin' ? 'Admin Code' : 'ID Number'}
-                      </Label>
+                       <Label htmlFor="id-number">
+                         {signupForm.role === 'student' ? 'Student ID' : 
+                          signupForm.role === 'organizer' ? 'Staff ID' : 'ID Number'}
+                       </Label>
                       <Input
                         id="id-number"
                         type="text"
-                        placeholder={
-                          signupForm.role === 'student' ? 'Enter Student ID' : 
-                          signupForm.role === 'organizer' ? 'Enter Staff ID' : 
-                          signupForm.role === 'admin' ? 'Enter Admin Code' : 'Enter ID'
-                        }
+                         placeholder={
+                           signupForm.role === 'student' ? 'Enter Student ID' : 
+                           signupForm.role === 'organizer' ? 'Enter Staff ID' : 'Enter ID'
+                         }
                         value={signupForm.idNumber}
                         onChange={(e) => setSignupForm(prev => ({ ...prev, idNumber: e.target.value }))}
                         className="bg-input border-border"
