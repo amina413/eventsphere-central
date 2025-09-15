@@ -15,7 +15,7 @@ export const Footer = () => {
               <span className="text-nav-foreground font-bold text-2xl">EventSphere</span>
             </Link>
             <p className="text-nav-foreground/80 mb-6 leading-relaxed">
-              Connecting students with amazing events across universities. 
+              Connecting students with amazing events. 
               Discover, register, and participate in experiences that matter.
             </p>
             <div className="flex space-x-4">
@@ -49,13 +49,8 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/categories" className="text-nav-foreground/80 hover:text-accent transition-colors">
-                  Event Categories
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-nav-foreground/80 hover:text-accent transition-colors">
-                  Contact
+                <Link to="/gallery" className="text-nav-foreground/80 hover:text-accent transition-colors">
+                  Gallery
                 </Link>
               </li>
             </ul>

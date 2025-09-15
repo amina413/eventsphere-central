@@ -110,13 +110,13 @@ const Events = () => {
   };
 
   const eventTypeColors = {
-    technical: "bg-primary",
-    cultural: "bg-primary", 
-    academic: "bg-primary",
-    sports: "bg-primary",
-    workshop: "bg-primary",
-    seminar: "bg-primary",
-    competition: "bg-primary"
+    technical: "bg-primary text-primary-foreground",
+    cultural: "bg-primary text-primary-foreground", 
+    academic: "bg-primary text-primary-foreground",
+    sports: "bg-primary text-primary-foreground",
+    workshop: "bg-primary text-primary-foreground",
+    seminar: "bg-primary text-primary-foreground",
+    competition: "bg-primary text-primary-foreground"
   };
 
   if (loading) {
@@ -161,7 +161,7 @@ const Events = () => {
                       className="w-full h-48 object-cover bg-muted"
                     />
                     <Badge 
-                      className={`absolute top-3 left-3 text-white ${eventTypeColors[event.category?.toLowerCase()] || 'bg-gray-500'}`}
+                      className={`absolute top-3 left-3 ${eventTypeColors[event.category?.toLowerCase()] || 'bg-primary text-primary-foreground'}`}
                     >
                       {event.category}
                     </Badge>

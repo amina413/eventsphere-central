@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import StudentDashboard from "./pages/StudentDashboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
 import Gallery from "./pages/Gallery";
 import Events from "./pages/Events";
 import NotFound from "./pages/NotFound";
@@ -46,6 +48,8 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

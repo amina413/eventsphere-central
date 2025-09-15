@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, 
   Calendar, 
@@ -17,28 +18,29 @@ import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   variant: "student" | "organizer";
+  activeSection?: string;
+  setActiveSection?: (section: string) => void;
 }
 
 const studentLinks = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/student/dashboard" },
-  { icon: Calendar, label: "My Events", href: "/student/events" },
-  { icon: Award, label: "Certificates", href: "/student/certificates" },
-  { icon: MessageSquare, label: "Feedback", href: "/student/feedback" },
-  { icon: ImageIcon, label: "Media Gallery", href: "/student/media" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "dashboard" },
+  { icon: Calendar, label: "My Events", href: "events" },
+  { icon: Award, label: "Certificates", href: "certificates" },
+  { icon: MessageSquare, label: "Feedback", href: "feedback" },
 ];
 
 const organizerLinks = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/organizer/dashboard" },
-  { icon: Calendar, label: "My Events", href: "/organizer/events" },
-  { icon: Plus, label: "Create Event", href: "/organizer/create" },
-  { icon: Users, label: "Registrations", href: "/organizer/registrations" },
-  { icon: ImageIcon, label: "Media", href: "/organizer/media" },
-  { icon: BarChart3, label: "Reports", href: "/organizer/reports" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "dashboard" },
+  { icon: Calendar, label: "My Events", href: "events" },
+  { icon: Plus, label: "Create Event", href: "create" },
+  { icon: Users, label: "Registrations", href: "registrations" },
+  { icon: BarChart3, label: "Reports", href: "reports" },
 ];
 
-export const Sidebar = ({ variant }: SidebarProps) => {
+export const Sidebar = ({ variant, activeSection, setActiveSection }: SidebarProps) => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { profile } = useAuth();
   
   const links = variant === "student" ? studentLinks : organizerLinks;
 
@@ -70,22 +72,21 @@ export const Sidebar = ({ variant }: SidebarProps) => {
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
           {links.map((link) => {
-            const isActive = location.pathname === link.href;
+            const isActive = activeSection ? activeSection === link.href : location.pathname === link.href;
             return (
               <li key={link.href}>
-                <Link to={link.href}>
-                  <Button
-                    variant={isActive ? "secondary" : "ghost"}
-                    className={cn(
-                      "w-full justify-start",
-                      isActive && "bg-accent/10 text-accent font-medium",
-                      isCollapsed && "px-2"
-                    )}
-                  >
-                    <link.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />
-                    {!isCollapsed && <span>{link.label}</span>}
-                  </Button>
-                </Link>
+                <Button
+                  variant={isActive ? "secondary" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    isActive && "bg-accent/10 text-accent font-medium",
+                    isCollapsed && "px-2"
+                  )}
+                  onClick={() => setActiveSection ? setActiveSection(link.href) : null}
+                >
+                  <link.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />
+                  {!isCollapsed && <span>{link.label}</span>}
+                </Button>
               </li>
             );
           })}
@@ -101,7 +102,7 @@ export const Sidebar = ({ variant }: SidebarProps) => {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-card-foreground truncate">
-                John Doe
+                {profile?.full_name || (variant === "student" ? "Student" : "Organizer")}
               </p>
               <p className="text-xs text-muted-foreground truncate">
                 {variant === "student" ? "Student" : "Event Organizer"}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import heroTech from "@/assets/hero-tech.jpg";
@@ -32,7 +33,7 @@ export const HeroSection = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(timer);
   }, []);
@@ -61,7 +62,7 @@ export const HeroSection = () => {
               alt={image.alt}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/60 to-accent/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/50 to-black/40" />
           </div>
         ))}
       </div>
@@ -104,14 +105,17 @@ export const HeroSection = () => {
           and academic conferences. Your next great experience awaits.
         </p>
         
-        <Button 
-          variant="hero" 
-          size="lg" 
-          className="text-lg px-8 py-4 shadow-glow animate-pulse hover:animate-none"
-        >
-          Get Started
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
+        <Link to="/auth">
+          <Button 
+            variant="hero" 
+            size="lg" 
+            className="text-lg px-8 py-4 shadow-glow animate-pulse hover:animate-none"
+            style={{ animationDuration: '3s' }}
+          >
+            Get Started
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </Link>
       </div>
 
       {/* Carousel Dots */}

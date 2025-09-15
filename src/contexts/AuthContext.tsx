@@ -11,7 +11,7 @@ interface Profile {
   user_id: string;
   full_name: string;
   id_number?: string;
-  role: 'visitor' | 'student' | 'organizer';
+  role: 'student' | 'organizer';
   avatar_url?: string;
 }
 

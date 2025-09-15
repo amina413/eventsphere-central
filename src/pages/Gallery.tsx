@@ -62,10 +62,10 @@ const galleryEvents = [
 ];
 
 const eventTypeColors = {
-  Technical: "bg-primary",
-  Cultural: "bg-primary", 
-  Academic: "bg-primary",
-  Sports: "bg-primary"
+  Technical: "bg-primary text-primary-foreground",
+  Cultural: "bg-primary text-primary-foreground", 
+  Academic: "bg-primary text-primary-foreground",
+  Sports: "bg-primary text-primary-foreground"
 };
 
 const Gallery = () => {
@@ -93,7 +93,7 @@ const Gallery = () => {
                   className="w-full h-48 object-cover bg-muted"
                 />
                 <Badge 
-                  className={`absolute top-3 left-3 text-white ${eventTypeColors[event.type]}`}
+                  className={`absolute top-3 left-3 ${eventTypeColors[event.type]}`}
                 >
                   {event.type}
                 </Badge>
@@ -153,7 +153,7 @@ const Gallery = () => {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold pr-4">{selectedEvent.title}</h2>
-                    <Badge className={`mt-2 text-white ${eventTypeColors[selectedEvent.type]}`}>
+                    <Badge className={`mt-2 ${eventTypeColors[selectedEvent.type]}`}>
                       {selectedEvent.type}
                     </Badge>
                   </div>

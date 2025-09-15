@@ -329,9 +329,8 @@ export default function Auth() {
                           <SelectValue placeholder="Select user type" />
                         </SelectTrigger>
                         <SelectContent className="bg-card border-border">
-                          <SelectItem value="visitor" className="hover:bg-accent/20">Visitor</SelectItem>
                           <SelectItem value="student" className="hover:bg-accent/20">Student</SelectItem>
-<SelectItem value="organizer" className="hover:bg-accent/20">Organizer</SelectItem>
+                          <SelectItem value="organizer" className="hover:bg-accent/20">Organizer</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

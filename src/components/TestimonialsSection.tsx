@@ -8,7 +8,7 @@ const testimonials = [
     role: "Computer Science Student",
     rating: 5,
     content: "EventSphere made registering for TechFest incredibly easy. The QR code check-in was seamless, and I loved getting my digital certificate instantly!",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b2c5?w=150&h=150&fit=crop&crop=face"
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
   },
   {
     name: "Marcus Johnson",
@@ -108,8 +108,8 @@ export const TestimonialsSection = () => {
             <div className="text-muted-foreground">Events Hosted</div>
           </div>
           <div>
-            <div className="text-3xl md:text-4xl font-bold text-success mb-2">50+</div>
-            <div className="text-muted-foreground">Universities</div>
+            <div className="text-3xl md:text-4xl font-bold text-success mb-2">1</div>
+            <div className="text-muted-foreground">University</div>
           </div>
           <div>
             <div className="text-3xl md:text-4xl font-bold text-warning mb-2">98%</div>

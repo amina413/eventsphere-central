@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Code, Music, GraduationCap, Users } from "lucide-react";
+import { Code, Music, GraduationCap, Trophy } from "lucide-react";
 import eventTechnical from "@/assets/event-technical.jpg";
 import eventCultural from "@/assets/event-cultural.jpg";
 import eventAcademic from "@/assets/event-academic.jpg";
@@ -33,8 +34,8 @@ const eventCategories = [
   {
     title: "Sports & Wellness",
     description: "Tournaments, fitness challenges, outdoor adventures, and wellness programs.",
-    image: eventTechnical, // placeholder
-    icon: Users,
+    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop", 
+    icon: Trophy,
     stats: "40+ Events",
     color: "from-warning to-warning/80"
   }
@@ -94,12 +95,14 @@ export const EventsSection = () => {
               </CardContent>
 
               <CardFooter>
-                <Button 
-                  variant="outline" 
-                  className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300"
-                >
-                  View Events
-                </Button>
+                <Link to="/events" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300"
+                  >
+                    View Events
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
@@ -107,9 +110,11 @@ export const EventsSection = () => {
 
         {/* Call to Action */}
         <div className="text-center mt-16">
-          <Button variant="hero" size="lg" className="shadow-glow">
-            Browse All Events
-          </Button>
+          <Link to="/events">
+            <Button variant="hero" size="lg" className="shadow-glow">
+              Browse All Events
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
