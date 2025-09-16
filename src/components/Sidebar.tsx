@@ -98,7 +98,9 @@ export const Sidebar = ({ variant, activeSection, setActiveSection }: SidebarPro
         <div className="p-4 border-t border-border">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">JD</span>
+              <span className="text-white text-sm font-medium">
+                {profile?.full_name ? profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase() : (variant === "student" ? "ST" : "OR")}
+              </span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-card-foreground truncate">

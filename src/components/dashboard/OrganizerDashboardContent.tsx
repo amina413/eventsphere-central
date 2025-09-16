@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CreateEventForm } from "@/components/forms/CreateEventForm";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -446,78 +445,65 @@ export const OrganizerDashboardContent = ({ activeSection }: OrganizerDashboardC
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="category">Category</Label>
-                <Select 
-                  value={createEventForm.category} 
-                  onValueChange={(value) => setCreateEventForm(prev => ({ ...prev, category: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="technical">Technical</SelectItem>
-                    <SelectItem value="cultural">Cultural</SelectItem>
-                    <SelectItem value="academic">Academic</SelectItem>
-                    <SelectItem value="sports">Sports</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Label htmlFor="mode">Mode of Delivery</Label>
-                <Select 
-                  value={createEventForm.mode} 
-                  onValueChange={(value) => setCreateEventForm(prev => ({ ...prev, mode: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select mode" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="online">Online</SelectItem>
-                    <SelectItem value="offline">On-Location</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="category">Event Category</Label>
+              <Select value={createEventForm.category} onValueChange={(value) => setCreateEventForm(prev => ({ ...prev, category: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="technical">Technical</SelectItem>
+                  <SelectItem value="cultural">Cultural</SelectItem>
+                  <SelectItem value="academic">Academic</SelectItem>
+                  <SelectItem value="sports">Sports</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-
-            {createEventForm.mode === "offline" && (
-              <div>
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  value={createEventForm.location}
-                  onChange={(e) => setCreateEventForm(prev => ({ ...prev, location: e.target.value }))}
-                  placeholder="Enter event location"
-                  required
-                />
-              </div>
-            )}
             
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="eventDate">Event Date</Label>
-                <Input
-                  id="eventDate"
-                  type="date"
-                  value={createEventForm.eventDate}
-                  onChange={(e) => setCreateEventForm(prev => ({ ...prev, eventDate: e.target.value }))}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="capacity">Capacity</Label>
-                <Input
-                  id="capacity"
-                  type="number"
-                  value={createEventForm.capacity}
-                  onChange={(e) => setCreateEventForm(prev => ({ ...prev, capacity: e.target.value }))}
-                  placeholder="Max participants"
-                  required
-                />
-              </div>
+            <div>
+              <Label htmlFor="mode">Mode of Delivery</Label>
+              <Select value={createEventForm.mode} onValueChange={(value) => setCreateEventForm(prev => ({ ...prev, mode: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="online">Online</SelectItem>
+                  <SelectItem value="offline">On-Location</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                value={createEventForm.location}
+                onChange={(e) => setCreateEventForm(prev => ({ ...prev, location: e.target.value }))}
+                placeholder={createEventForm.mode === 'online' ? 'Meeting Link/Platform' : 'Venue Location'}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="eventDate">Event Date & Time</Label>
+              <Input
+                id="eventDate"
+                type="datetime-local"
+                value={createEventForm.eventDate}
+                onChange={(e) => setCreateEventForm(prev => ({ ...prev, eventDate: e.target.value }))}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="capacity">Capacity</Label>
+              <Input
+                id="capacity"
+                type="number"
+                value={createEventForm.capacity}
+                onChange={(e) => setCreateEventForm(prev => ({ ...prev, capacity: e.target.value }))}
+                required
+              />
             </div>
             
             <Button type="submit" className="w-full">Create Event</Button>
@@ -536,52 +522,44 @@ export const OrganizerDashboardContent = ({ activeSection }: OrganizerDashboardC
         <CardContent>
           <div className="space-y-4">
             {events.map((event) => (
-              <div key={event.id}>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <div className="p-4 border border-border rounded-lg cursor-pointer hover:bg-accent/5 transition-colors">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h4 className="font-medium text-card-foreground">{event.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {event.current_registrations} registrations
-                          </p>
+              <Card key={event.id} className="p-4 cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => setSelectedEvent(selectedEvent === event.id ? null : event.id)}>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-medium">{event.title}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {event.current_registrations} registrations • {event.capacity} capacity
+                    </p>
+                  </div>
+                  <Badge className="bg-primary text-primary-foreground">
+                    {selectedEvent === event.id ? 'Hide Details' : 'View Details'}
+                  </Badge>
+                </div>
+                
+                {selectedEvent === event.id && mockRegistrations[event.id] && (
+                  <div className="mt-4 pt-4 border-t">
+                    <div className="flex justify-between items-center mb-3">
+                      <h5 className="font-medium">Registered Students</h5>
+                      <div className="text-sm text-muted-foreground">
+                        Total: {mockRegistrations[event.id].length}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      {mockRegistrations[event.id].map((registration) => (
+                        <div key={registration.id} className="flex justify-between items-center py-2 px-3 bg-muted rounded">
+                          <div>
+                            <span className="font-medium">{registration.name}</span>
+                            <span className="text-sm text-muted-foreground ml-2">ID: {registration.studentId}</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            Registered: {new Date(registration.registrationDate).toLocaleDateString()}
+                          </span>
                         </div>
-                        <Button size="sm" variant="outline">View Registrations</Button>
-                      </div>
+                      ))}
                     </div>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Registrations - {event.title}</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="text-center p-4 bg-accent/5 rounded-lg">
-                        <div className="text-2xl font-bold text-primary">{mockRegistrations[event.id]?.length || 0}</div>
-                        <div className="text-sm text-muted-foreground">Total Registrations</div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {mockRegistrations[event.id]?.map((registration) => (
-                          <div key={registration.id} className="flex items-center justify-between p-3 border border-border rounded">
-                            <div>
-                              <div className="font-medium">{registration.name}</div>
-                              <div className="text-sm text-muted-foreground">{registration.studentId}</div>
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {new Date(registration.registrationDate).toLocaleDateString()}
-                            </div>
-                          </div>
-                        )) || (
-                          <div className="text-center text-muted-foreground py-4">
-                            No registrations yet.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
+                  </div>
+                )}
+              </Card>
             ))}
           </div>
         </CardContent>
@@ -590,95 +568,72 @@ export const OrganizerDashboardContent = ({ activeSection }: OrganizerDashboardC
   }
 
   if (activeSection === "reports") {
-    const completedEvents = events.filter(event => event.status === "completed");
+    const completedEvents = events.filter(e => e.status === 'completed');
     
     return (
       <Card className="border-0 shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <BarChart3 className="h-5 w-5" />
-            <span>Event Reports & Analytics</span>
-          </CardTitle>
+          <CardTitle>Event Reports & Analytics</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {completedEvents.map((event) => {
-              const feedback = mockFeedback[event.id] || [];
-              const averageRating = feedback.length > 0 
-                ? feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length 
-                : 0;
-              
-              return (
-                <div key={event.id} className="p-4 border border-border rounded-lg">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-lg font-semibold">{event.title}</h4>
-                    <Badge className="bg-success text-success-foreground">Completed</Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">{event.current_registrations}</div>
-                      <div className="text-sm text-muted-foreground">Participants</div>
+            {completedEvents.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No completed events to show reports for yet.
+              </p>
+            ) : (
+              completedEvents.map((event) => (
+                <Card key={event.id} className="p-4">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-medium">{event.title}</h4>
+                      <Badge className="bg-success text-success-foreground">Completed</Badge>
                     </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center space-x-1">
-                        <Star className="h-4 w-4 text-warning fill-current" />
-                        <span className="text-2xl font-bold text-warning">{averageRating.toFixed(1)}</span>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-primary">{event.current_registrations}</div>
+                        <div className="text-sm text-muted-foreground">Total Participants</div>
                       </div>
-                      <div className="text-sm text-muted-foreground">Avg Rating</div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-accent">
+                          {mockFeedback[event.id] ? (
+                            (mockFeedback[event.id].reduce((sum, f) => sum + f.rating, 0) / mockFeedback[event.id].length).toFixed(1)
+                          ) : 'N/A'}
+                        </div>
+                        <div className="text-sm text-muted-foreground">Avg Rating</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-success">
+                          {mockFeedback[event.id] ? mockFeedback[event.id].length : 0}
+                        </div>
+                        <div className="text-sm text-muted-foreground">Feedback Count</div>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-accent">{feedback.length}</div>
-                      <div className="text-sm text-muted-foreground">Feedback</div>
-                    </div>
-                  </div>
-
-                  {/* Satisfaction Rate Graph */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Student Satisfaction</span>
-                      <span className="text-sm text-muted-foreground">{Math.round((averageRating / 5) * 100)}%</span>
-                    </div>
-                    <div className="w-full bg-secondary rounded-full h-2">
-                      <div 
-                        className="bg-success h-2 rounded-full transition-all duration-300" 
-                        style={{ width: `${(averageRating / 5) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Comments Section */}
-                  <div>
-                    <h5 className="font-medium mb-2">Student Feedback</h5>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {feedback.map((fb, index) => (
-                        <div key={index} className="p-2 bg-accent/5 rounded text-sm">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="font-medium">{fb.student}</span>
-                            <div className="flex items-center space-x-1">
-                              {[...Array(fb.rating)].map((_, i) => (
-                                <Star key={i} className="h-3 w-3 text-warning fill-current" />
-                              ))}
+                    
+                    {mockFeedback[event.id] && (
+                      <div className="space-y-3">
+                        <h5 className="font-medium">Student Feedback</h5>
+                        {mockFeedback[event.id].map((feedback, index) => (
+                          <div key={index} className="p-3 bg-muted rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="font-medium">{feedback.student}</span>
+                              <div className="flex items-center">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star key={star} className={`w-4 h-4 ${
+                                    star <= feedback.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                  }`} />
+                                ))}
+                              </div>
                             </div>
+                            <p className="text-sm text-muted-foreground">{feedback.comment}</p>
                           </div>
-                          <p className="text-muted-foreground">{fb.comment}</p>
-                        </div>
-                      ))}
-                      {feedback.length === 0 && (
-                        <div className="text-center text-muted-foreground py-4">
-                          No feedback available for this event.
-                        </div>
-                      )}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              );
-            })}
-            
-            {completedEvents.length === 0 && (
-              <div className="text-center text-muted-foreground py-8">
-                No completed events available for reports.
-              </div>
+                </Card>
+              ))
             )}
           </div>
         </CardContent>

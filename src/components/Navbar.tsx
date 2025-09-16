@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 interface NavbarProps {
   variant?: "home" | "dashboard";
@@ -12,9 +13,26 @@ interface NavbarProps {
 
 export const Navbar = ({ variant = "home" }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    if (profile?.role === 'student') {
+      navigate('/student/dashboard');
+    } else if (profile?.role === 'organizer') {
+      navigate('/organizer/dashboard');
+    }
+  };
+
+  const handleNotificationClick = () => {
+    setShowNotifications(!showNotifications);
+    toast({
+      title: "Notifications",
+      description: "No new notifications at this time.",
+    });
+  };
 
   const handleSignOut = async () => {
     try {
@@ -46,13 +64,26 @@ export const Navbar = ({ variant = "home" }: NavbarProps) => {
           
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" className="text-nav-foreground hover:bg-accent/20">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <div className="relative">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-nav-foreground hover:bg-accent/20 relative"
+                onClick={handleNotificationClick}
+              >
+                <Bell className="h-5 w-5" />
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs bg-destructive text-destructive-foreground">
+                  3
+                </Badge>
+              </Button>
+            </div>
             {profile && (
-              <span className="text-nav-foreground text-sm">
+              <button 
+                onClick={handleProfileClick}
+                className="text-nav-foreground text-sm hover:text-accent transition-colors cursor-pointer"
+              >
                 {profile.full_name} ({profile.role})
-              </span>
+              </button>
             )}
             <Button 
               variant="ghost" 
@@ -100,9 +131,12 @@ export const Navbar = ({ variant = "home" }: NavbarProps) => {
             {user ? (
               <div className="flex items-center space-x-4">
                 {profile && (
-                  <span className="text-nav-foreground text-sm">
+                  <button 
+                    onClick={handleProfileClick}
+                    className="text-nav-foreground text-sm hover:text-accent transition-colors cursor-pointer"
+                  >
                     {profile.full_name}
-                  </span>
+                  </button>
                 )}
                 <Button 
                   variant="ghost" 

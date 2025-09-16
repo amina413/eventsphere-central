@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,14 +11,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Calendar, 
-  Award, 
-  MessageSquare, 
   Users, 
-  QrCode, 
-  X,
+  Award, 
+  BookOpen, 
+  MessageSquare,
+  Download,
+  Star,
   CheckCircle,
+  MapPin,
   Clock,
-  Download
+  QrCode,
+  X
 } from "lucide-react";
 
 // Mock data
@@ -156,6 +160,13 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
     });
   };
 
+  const handleCheckIn = () => {
+    toast({
+      title: 'Check-in Successful!',
+      description: 'You have been checked in to the event.',
+    });
+  };
+
   if (activeSection === "dashboard") {
     return (
       <div className="space-y-6">
@@ -252,7 +263,7 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
                                 <Label htmlFor="fullName">Full Name</Label>
                                 <Input
                                   id="fullName"
-                                  value={registrationForm.fullName}
+                                  value={registrationForm.fullName || profile?.full_name || ''}
                                   onChange={(e) => setRegistrationForm(prev => ({ ...prev, fullName: e.target.value }))}
                                   required
                                 />
@@ -261,7 +272,7 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
                                 <Label htmlFor="studentId">Student ID</Label>
                                 <Input
                                   id="studentId"
-                                  value={registrationForm.studentId}
+                                  value={registrationForm.studentId || profile?.id_number || ''}
                                   onChange={(e) => setRegistrationForm(prev => ({ ...prev, studentId: e.target.value }))}
                                   required
                                 />
@@ -306,93 +317,91 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
                   </div>
                   
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                    <div className="flex items-center space-x-3 order-2 sm:order-1">
-                      <Badge 
-                        variant={registration.status === "attended" ? "default" : "secondary"}
-                        className={
-                          registration.status === "attended" ? "bg-success text-success-foreground" :
-                          registration.status === "confirmed" ? "bg-primary text-primary-foreground" :
-                          registration.status === "cancelled" ? "bg-destructive text-destructive-foreground" :
-                          "bg-accent text-accent-foreground"
-                        }
-                      >
-                        {registration.status === "attended" && <CheckCircle className="w-3 h-3 mr-1" />}
-                        {registration.status === "registered" && <Clock className="w-3 h-3 mr-1" />}
-                        {registration.status}
-                      </Badge>
-                      
-                      <div className="flex flex-wrap gap-2 order-1 sm:order-2">
-                        {registration.status === "attended" && (
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button size="sm" variant="outline">
-                                <MessageSquare className="h-4 w-4 mr-1" />
-                                Feedback
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Submit Feedback</DialogTitle>
-                              </DialogHeader>
-                              <form onSubmit={handleSubmitFeedback} className="space-y-4">
-                                <div>
-                                  <Label htmlFor="feedbackFullName">Full Name</Label>
-                                  <Input
-                                    id="feedbackFullName"
-                                    value={feedbackForm.fullName}
-                                    onChange={(e) => setFeedbackForm(prev => ({ ...prev, fullName: e.target.value }))}
-                                    required
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="feedbackStudentId">Student ID</Label>
-                                  <Input
-                                    id="feedbackStudentId"
-                                    value={feedbackForm.studentId}
-                                    onChange={(e) => setFeedbackForm(prev => ({ ...prev, studentId: e.target.value }))}
-                                    required
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="feedbackEventTitle">Event</Label>
-                                  <Input
-                                    id="feedbackEventTitle"
-                                    value={registration.events?.title || ''}
-                                    readOnly
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="feedback">Feedback</Label>
-                                  <Textarea
-                                    id="feedback"
-                                    value={feedbackForm.feedback}
-                                    onChange={(e) => setFeedbackForm(prev => ({ ...prev, feedback: e.target.value }))}
-                                    placeholder="Please share your feedback about the event..."
-                                    required
-                                  />
-                                </div>
-                                <Button type="submit" className="w-full">Submit Feedback</Button>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
-                        )}
-                        {registration.status === "confirmed" && (
-                          <Button size="sm" variant="outline">
-                            <QrCode className="h-4 w-4 mr-1" />
-                            Check-in
-                          </Button>
-                        )}
-                        {registration.status === "registered" && (
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => handleCancelRegistration(registration.id)}
-                          >
-                            <X className="h-4 w-4 mr-1" />
-                            Cancel
-                          </Button>
-                        )}
-                      </div>
+                    <Badge 
+                      variant={registration.status === "attended" ? "default" : "secondary"}
+                      className={
+                        registration.status === "attended" ? "bg-success text-success-foreground" :
+                        registration.status === "confirmed" ? "bg-primary text-primary-foreground" :
+                        registration.status === "cancelled" ? "bg-destructive text-destructive-foreground" :
+                        "bg-accent text-accent-foreground"
+                      }
+                    >
+                      {registration.status === "attended" && <CheckCircle className="w-3 h-3 mr-1" />}
+                      {registration.status === "registered" && <Clock className="w-3 h-3 mr-1" />}
+                      {registration.status}
+                    </Badge>
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {registration.status === "attended" && (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline">
+                              <MessageSquare className="h-4 w-4 mr-1" />
+                              Feedback
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Submit Feedback</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleSubmitFeedback} className="space-y-4">
+                              <div>
+                                <Label htmlFor="feedbackFullName">Full Name</Label>
+                                <Input
+                                  id="feedbackFullName"
+                                  value={feedbackForm.fullName || profile?.full_name || ''}
+                                  onChange={(e) => setFeedbackForm(prev => ({ ...prev, fullName: e.target.value }))}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="feedbackStudentId">Student ID</Label>
+                                <Input
+                                  id="feedbackStudentId"
+                                  value={feedbackForm.studentId || profile?.id_number || ''}
+                                  onChange={(e) => setFeedbackForm(prev => ({ ...prev, studentId: e.target.value }))}
+                                  required
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="feedbackEventTitle">Event</Label>
+                                <Input
+                                  id="feedbackEventTitle"
+                                  value={registration.events?.title || ''}
+                                  readOnly
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="feedback">Feedback</Label>
+                                <Textarea
+                                  id="feedback"
+                                  value={feedbackForm.feedback}
+                                  onChange={(e) => setFeedbackForm(prev => ({ ...prev, feedback: e.target.value }))}
+                                  placeholder="Please share your feedback about the event..."
+                                  required
+                                />
+                              </div>
+                              <Button type="submit" className="w-full">Submit Feedback</Button>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                      {registration.status === "confirmed" && (
+                        <Button size="sm" variant="outline" onClick={handleCheckIn}>
+                          <QrCode className="h-4 w-4 mr-1" />
+                          Check-in
+                        </Button>
+                      )}
+                      {registration.status === "registered" && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleCancelRegistration(registration.id)}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Cancel
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -451,7 +460,7 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
                               <Label htmlFor="fullName">Full Name</Label>
                               <Input
                                 id="fullName"
-                                value={registrationForm.fullName}
+                                value={registrationForm.fullName || profile?.full_name || ''}
                                 onChange={(e) => setRegistrationForm(prev => ({ ...prev, fullName: e.target.value }))}
                                 required
                               />
@@ -460,7 +469,7 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
                               <Label htmlFor="studentId">Student ID</Label>
                               <Input
                                 id="studentId"
-                                value={registrationForm.studentId}
+                                value={registrationForm.studentId || profile?.id_number || ''}
                                 onChange={(e) => setRegistrationForm(prev => ({ ...prev, studentId: e.target.value }))}
                                 required
                               />
@@ -495,32 +504,42 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
           <CardTitle>My Certificates</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-            {certificates.map((cert) => (
-              <div key={cert.id} className="p-4 border border-border rounded-lg bg-gradient-to-br from-accent/5 to-primary/5">
-                <div className="flex items-start justify-between mb-3">
-                  <Award className="h-8 w-8 text-accent" />
-                  <Badge variant="outline">{cert.certificate_type}</Badge>
+          <div className="space-y-4">
+            <div className="grid gap-4">
+              <h4 className="font-medium">Available Certificates</h4>
+              {certificates.map((certificate) => (
+                <div key={certificate.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                  <div>
+                    <h5 className="font-medium">{certificate.events.title}</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Certificate of {certificate.certificate_type} • Issued: {new Date(certificate.issued_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <Button size="sm">
+                    <Download className="h-4 w-4 mr-1" />
+                    Download
+                  </Button>
                 </div>
-                <h4 className="font-medium text-card-foreground mb-1">
-                  {cert.events?.title} Certificate
-                </h4>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Issued on {new Date(cert.issued_at).toLocaleDateString()}
-                </p>
-                <Button size="sm" variant="outline" className="w-full">
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Certificate
-                </Button>
-              </div>
-            ))}
+              ))}
+            </div>
             
-            {certificates.length === 0 && (
-              <div className="col-span-2">
-                <p className="text-center text-muted-foreground py-8">
-                  No certificates earned yet. Attend events to earn certificates!
-                </p>
-              </div>
+            <div className="mt-6">
+              <h4 className="font-medium mb-3">Pending Certificates</h4>
+              {registrations.filter(r => r.status === "attended").map((registration) => (
+                <div key={registration.id} className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/20">
+                  <div>
+                    <h5 className="font-medium">{registration.events?.title}</h5>
+                    <p className="text-sm text-muted-foreground">Certificate processing - Available soon</p>
+                  </div>
+                  <Badge variant="secondary">Processing</Badge>
+                </div>
+              ))}
+            </div>
+            
+            {certificates.length === 0 && registrations.filter(r => r.status === "attended").length === 0 && (
+              <p className="text-center text-muted-foreground py-8">
+                No certificates available yet. Attend events to earn certificates!
+              </p>
             )}
           </div>
         </CardContent>
@@ -540,42 +559,55 @@ export const StudentDashboardContent = ({ activeSection }: StudentDashboardConte
               <Label htmlFor="feedbackFullName">Full Name</Label>
               <Input
                 id="feedbackFullName"
-                value={feedbackForm.fullName}
+                value={feedbackForm.fullName || profile?.full_name || ''}
                 onChange={(e) => setFeedbackForm(prev => ({ ...prev, fullName: e.target.value }))}
                 required
               />
             </div>
+            
             <div>
               <Label htmlFor="feedbackStudentId">Student ID</Label>
               <Input
                 id="feedbackStudentId"
-                value={feedbackForm.studentId}
+                value={feedbackForm.studentId || profile?.id_number || ''}
                 onChange={(e) => setFeedbackForm(prev => ({ ...prev, studentId: e.target.value }))}
                 required
               />
             </div>
+            
             <div>
-              <Label htmlFor="feedbackEventTitle">Event</Label>
-              <Input
-                id="feedbackEventTitle"
+              <Label htmlFor="eventSelect">Select Event</Label>
+              <select
+                id="eventSelect"
+                className="w-full p-2 border border-border rounded-md bg-background"
                 value={feedbackForm.eventTitle}
                 onChange={(e) => setFeedbackForm(prev => ({ ...prev, eventTitle: e.target.value }))}
-                placeholder="Enter event name"
                 required
-              />
+              >
+                <option value="">Select an event</option>
+                {registrations.filter(r => r.status === "attended").map((registration) => (
+                  <option key={registration.id} value={registration.events?.title || ''}>
+                    {registration.events?.title}
+                  </option>
+                ))}
+              </select>
             </div>
+            
             <div>
-              <Label htmlFor="feedback">Feedback</Label>
+              <Label htmlFor="feedbackText">Your Feedback</Label>
               <Textarea
-                id="feedback"
+                id="feedbackText"
                 value={feedbackForm.feedback}
                 onChange={(e) => setFeedbackForm(prev => ({ ...prev, feedback: e.target.value }))}
-                placeholder="Please share your feedback about the event..."
-                className="min-h-32"
+                placeholder="Please share your experience with the event..."
+                rows={5}
                 required
               />
             </div>
-            <Button type="submit" className="w-full">Submit Feedback</Button>
+            
+            <Button type="submit" className="w-full">
+              Submit Feedback
+            </Button>
           </form>
         </CardContent>
       </Card>
